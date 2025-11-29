@@ -88,6 +88,51 @@ export default function Home() {
                     ))}
                 </div>
             </section>
+            {/* TOP DESTINATIONS */}
+            <section className="px-6 py-20 bg-white text-gray-900">
+                <h2 className="text-3xl font-semibold mb-10 text-center">Popular Retreat Destinations</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+                    {[
+                        { name: "Malibu, CA", img: "https://images.pexels.com/photos/919745/pexels-photo-919745.jpeg" },
+                        { name: "Colorado, USA", img: "https://images.pexels.com/photos/2372945/pexels-photo-2372945.jpeg" },
+                        { name: "Oregon, USA", img: "https://images.pexels.com/photos/210617/pexels-photo-210617.jpeg" },
+                        { name: "Lake Tahoe, CA", img: "https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg" },
+                    ].map((location, idx) => (
+                        <div key={idx} className="relative h-56 w-full rounded-xl overflow-hidden shadow hover:shadow-lg transition">
+                            <Image src={location.img} alt={location.name} fill className="object-cover" />
+                            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-40 text-white text-center py-2">
+                                {location.name}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            {/* HOW IT WORKS / PROCESS */}
+            <section className="px-6 py-20 bg-gray-100 text-gray-900 text-center">
+                <h2 className="text-3xl font-semibold mb-10">How It Works</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    <div className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
+                        <h3 className="font-semibold text-xl mb-2">1. Search Venues</h3>
+                        <p className="text-gray-600 text-sm">
+                            Explore curated venues for offsites and retreats with ease.
+                        </p>
+                    </div>
+                    <div className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
+                        <h3 className="font-semibold text-xl mb-2">2. Submit Inquiry</h3>
+                        <p className="text-gray-600 text-sm">
+                            Fill out a simple form and our team will help you secure the venue.
+                        </p>
+                    </div>
+                    <div className="bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
+                        <h3 className="font-semibold text-xl mb-2">3. Enjoy Retreat</h3>
+                        <p className="text-gray-600 text-sm">
+                            Arrive at the venue and enjoy a productive and fun team offsite.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
 
             {/* WHY CHOOSE US */}
             <section id="why" className="px-6 py-20 bg-gray-100 text-center">
@@ -111,6 +156,62 @@ export default function Home() {
                             Companies from all over the world rely on us for memorable retreats.
                         </p>
                     </div>
+                </div>
+            </section>
+
+            {/* REVIEWS */}
+            <section className="px-6 py-20 bg-gray-50 text-gray-900">
+                <h2 className="text-3xl font-semibold mb-10 text-center">What Teams Say About Us</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    {[
+                        {
+                            name: "Alice Johnson",
+                            role: "HR Manager, TechCorp",
+                            photo: "https://randomuser.me/api/portraits/women/68.jpg",
+                            text: "RetreatHub made planning our offsite effortless. The venue was perfect and the team loved it!",
+                            rating: 5,
+                        },
+                        {
+                            name: "Michael Lee",
+                            role: "Team Lead, InnovateX",
+                            photo: "https://randomuser.me/api/portraits/men/45.jpg",
+                            text: "Excellent service and handpicked venues. Our retreat was both productive and fun!",
+                            rating: 4.8,
+                        },
+                        {
+                            name: "Sophie Kim",
+                            role: "CEO, BrightSolutions",
+                            photo: "https://randomuser.me/api/portraits/women/32.jpg",
+                            text: "Highly recommend RetreatHub for any company looking for a hassle-free offsite experience.",
+                            rating: 5,
+                        },
+                    ].map((testimonial, idx) => (
+                        <div
+                            key={idx}
+                            className="bg-white rounded-2xl shadow hover:shadow-lg transition p-6 flex flex-col items-center text-center"
+                        >
+                            <Image
+                                src={testimonial.photo}
+                                alt={testimonial.name}
+                                width={80}
+                                height={80}
+                                className="rounded-full object-cover mb-4"
+                            />
+                            <p className="text-gray-700 text-sm mb-4 italic">"{testimonial.text}"</p>
+                            <div className="flex items-center mb-2">
+                                {Array.from({ length: 5 }, (_, i) => (
+                                    <span
+                                        key={i}
+                                        className={`text-yellow-500 ${i < Math.round(testimonial.rating) ? "" : "text-gray-300"}`}
+                                    >
+              ★
+            </span>
+                                ))}
+                            </div>
+                            <h4 className="font-semibold">{testimonial.name}</h4>
+                            <p className="text-gray-500 text-sm">{testimonial.role}</p>
+                        </div>
+                    ))}
                 </div>
             </section>
 
