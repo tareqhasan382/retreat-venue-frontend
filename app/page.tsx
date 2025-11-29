@@ -1,65 +1,129 @@
 import Image from "next/image";
 
+const venues = [
+    {
+        name: "Mountain View Retreat",
+        img: "https://images.pexels.com/photos/2372945/pexels-photo-2372945.jpeg",
+        price: "$500/day",
+        capacity: 50,
+        rating: 4.8,
+        location: "Colorado, USA",
+    },
+    {
+        name: "Beachside Escape",
+        img: "https://images.pexels.com/photos/2372945/pexels-photo-2372945.jpeg",
+        price: "$650/day",
+        capacity: 70,
+        rating: 4.7,
+        location: "Malibu, CA",
+    },
+    {
+        name: "Forest Lodge",
+        img: "https://images.pexels.com/photos/210617/pexels-photo-210617.jpeg",
+        price: "$400/day",
+        capacity: 40,
+        rating: 4.9,
+        location: "Oregon, USA",
+    },
+];
+
 export default function Home() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
-  );
+    return (
+        <main className="min-h-screen w-full bg-gray-50 text-gray-900">
+            {/* NAVBAR */}
+            <nav className="w-full px-6 py-5 flex justify-between items-center bg-white shadow sticky top-0 z-50">
+                <h1 className="text-2xl font-bold text-blue-600">RetreatHub</h1>
+                <div className="space-x-6 hidden md:flex">
+                    <a href="#venues" className="hover:text-blue-600">Venues</a>
+                    <a href="#why" className="hover:text-blue-600">Why Us</a>
+                    <a href="#contact" className="hover:text-blue-600">Contact</a>
+                </div>
+                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                    Book Now
+                </button>
+            </nav>
+
+            {/* HERO SECTION */}
+            <section className="relative w-full flex flex-col items-center justify-center text-center px-6 pt-32 pb-32 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 text-white">
+                <h1 className="text-5xl md:text-6xl font-bold leading-tight max-w-4xl">
+                    Find the Perfect Venue for Your Next Team Retreat
+                </h1>
+                <p className="mt-6 text-lg md:text-xl max-w-3xl text-gray-100">
+                    Explore top venues for offsites, team building, and company retreats with ease.
+                </p>
+                <div className="mt-8 w-full max-w-2xl flex items-center bg-white rounded-xl overflow-hidden shadow-lg">
+                    <input
+                        type="text"
+                        placeholder="Search destinations, venues..."
+                        className="flex-1 px-4 py-3 outline-none text-gray-700"
+                    />
+                    <button className="bg-blue-600 text-white px-6 py-3 font-medium hover:bg-blue-700">
+                        Search
+                    </button>
+                </div>
+            </section>
+
+            {/* FEATURED VENUES */}
+            <section id="venues" className="px-6 py-16 max-w-7xl mx-auto">
+                <h2 className="text-3xl font-semibold mb-8 text-center">Featured Retreat Venues</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {venues.map((venue, idx) => (
+                        <div key={idx} className="bg-white rounded-2xl shadow hover:shadow-xl transition overflow-hidden">
+                            <div className="relative h-64 w-full">
+                                <Image src={venue.img} alt={venue.name} fill className="object-cover" />
+                            </div>
+                            <div className="p-5">
+                                <h3 className="text-xl font-semibold">{venue.name}</h3>
+                                <p className="text-gray-500 text-sm mt-1">{venue.location}</p>
+                                <div className="flex items-center justify-between mt-2">
+                                    <span className="text-gray-700 font-medium">{venue.price}</span>
+                                    <span className="text-yellow-500 font-semibold">{venue.rating} ⭐</span>
+                                </div>
+                                <p className="mt-2 text-gray-600 text-sm">Capacity: {venue.capacity} people</p>
+                                <button className="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            {/* WHY CHOOSE US */}
+            <section id="why" className="px-6 py-20 bg-gray-100 text-center">
+                <h2 className="text-3xl font-semibold mb-10">Why Companies Choose Us</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+                    <div className="bg-white rounded-xl p-6 shadow hover:shadow-lg transition">
+                        <h3 className="font-semibold text-xl mb-2">Curated Venues</h3>
+                        <p className="text-gray-600 text-sm">
+                            We handpick venues perfect for productivity, bonding, and relaxation.
+                        </p>
+                    </div>
+                    <div className="bg-white rounded-xl p-6 shadow hover:shadow-lg transition">
+                        <h3 className="font-semibold text-xl mb-2">Seamless Booking</h3>
+                        <p className="text-gray-600 text-sm">
+                            Submit inquiries easily and get quick responses from our team.
+                        </p>
+                    </div>
+                    <div className="bg-white rounded-xl p-6 shadow hover:shadow-lg transition">
+                        <h3 className="font-semibold text-xl mb-2">Trusted by Teams</h3>
+                        <p className="text-gray-600 text-sm">
+                            Companies from all over the world rely on us for memorable retreats.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            {/* CTA / BOOKING */}
+            <section id="contact" className="px-6 py-24 bg-blue-600 text-white text-center">
+                <h2 className="text-4xl md:text-5xl font-bold">Plan Your Next Team Retreat Today</h2>
+                <p className="mt-4 max-w-xl mx-auto text-lg">
+                    Submit a booking inquiry and we’ll help you secure the perfect venue for your team.
+                </p>
+                <button className="mt-8 bg-white text-blue-600 font-semibold px-8 py-4 rounded-lg hover:bg-gray-100">
+                    Submit Inquiry
+                </button>
+            </section>
+        </main>
+    );
 }
