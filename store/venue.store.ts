@@ -30,6 +30,7 @@ interface VenueState {
 
     getVenues: (filters?: VenueFilters) => Promise<void>;
     setPage: (page: number) => void;
+    createVenue: (payload: VenuePayload) => Promise<Venue | null>;
 }
 interface VenuePayload {
     name: string;
