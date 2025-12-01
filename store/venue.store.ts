@@ -31,7 +31,16 @@ interface VenueState {
     getVenues: (filters?: VenueFilters) => Promise<void>;
     setPage: (page: number) => void;
 }
-
+interface VenuePayload {
+    name: string;
+    city: string;
+    country: string;
+    capacity: number;
+    pricePerNight: number;
+    description: string;
+    imageUrl: string;
+    type: string;
+}
 const useVenueStore = create<VenueState>()(
     devtools(
         persist(
@@ -73,6 +82,31 @@ const useVenueStore = create<VenueState>()(
                         }
                     } catch (err: any) {
                         set({ error: err.message });
+                    } finally {
+                        set({ loading: false });
+                    }
+                },
+
+                createVenue: async (payload: VenuePayload) => {
+                    set({ loading: true, error: null });
+                    try {
+                        const res = await apiFetch<VenueApiResponse>("/venues", {
+                            method: "POST",
+                            body: JSON.stringify(payload),
+                        });
+
+                        if (res.success && res.data) {
+                            set((state) => ({
+                                venues: [res.data, ...state.venues], // prepend new venue
+                            }));
+                            return res.data;
+                        } else {
+                            set({ error: res.message || "Failed to create venue" });
+                            return null;
+                        }
+                    } catch (err: any) {
+                        set({ error: err.message });
+                        return null;
                     } finally {
                         set({ loading: false });
                     }

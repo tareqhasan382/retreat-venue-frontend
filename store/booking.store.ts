@@ -4,6 +4,10 @@ import { create } from "zustand";
 import { devtools, persist } from "zustand/middleware";
 import { apiFetch } from "@/lib/apiClient";
 import { BookingInquiry, BookingInquiryPayload } from "@/types/bookings";
+interface BookingFilters {
+    companyName?: string;
+    city?: string;
+}
 
 interface BookingState {
     bookings: BookingInquiry[];
@@ -11,7 +15,8 @@ interface BookingState {
     loading: boolean;
     error: string | null;
 
-    getBookings: (venueId?: string) => Promise<BookingInquiry[] | null>;
+    // FIX: accept filters instead of venueId string
+    getBookings: (filters?: BookingFilters) => Promise<BookingInquiry[] | null>;
     getBookingById: (id: string) => Promise<BookingInquiry | null>;
     createBooking: (payload: BookingInquiryPayload) => Promise<BookingInquiry | null>;
     updateBooking: (id: string, payload: Partial<BookingInquiryPayload>) => Promise<BookingInquiry | null>;
@@ -28,13 +33,25 @@ const useBookingStore = create<BookingState>()(
                 error: null,
 
                 /** GET ALL BOOKINGS */
-                getBookings: async (venueId?: string) => {
+                getBookings: async (filters?: { companyName?: string; city?: string }) => {
                     set({ loading: true, error: null });
                     try {
-                        const url = venueId ? `/booking-inquiries?venueId=${venueId}` : "/booking-inquiries";
-                        const response = await apiFetch<BookingInquiry[]>(url, { method: "GET" });
-                        set({ bookings: response });
-                        return response;
+                        const query = new URLSearchParams();
+
+                        if (filters?.companyName) query.append("companyName", filters.companyName);
+                        if (filters?.city) query.append("city", filters.city);
+
+                        const url = `/bookings?${query.toString()}`;
+
+                        const response = await apiFetch<{
+                            statusCode: number;
+                            success: boolean;
+                            message: string;
+                            data: BookingInquiry[];
+                        }>(url, { method: "GET" });
+
+                        set({ bookings: response.data });
+                        return response.data;
                     } catch (err: any) {
                         set({ error: err.message });
                         return null;
@@ -43,13 +60,20 @@ const useBookingStore = create<BookingState>()(
                     }
                 },
 
+
                 /** GET SINGLE BOOKING */
                 getBookingById: async (id: string) => {
                     set({ loading: true, error: null });
                     try {
-                        const response = await apiFetch<BookingInquiry>(`/booking-inquiries/${id}`, { method: "GET" });
-                        set({ selectedBooking: response });
-                        return response;
+                        const response = await apiFetch<{
+                            statusCode: number;
+                            success: boolean;
+                            message: string;
+                            data: BookingInquiry;
+                        }>(`/bookings/${id}`, { method: "GET" });
+
+                        set({ selectedBooking: response.data });
+                        return response.data;
                     } catch (err: any) {
                         set({ error: err.message });
                         return null;
@@ -62,12 +86,18 @@ const useBookingStore = create<BookingState>()(
                 createBooking: async (payload: BookingInquiryPayload) => {
                     set({ loading: true, error: null });
                     try {
-                        const response = await apiFetch<BookingInquiry>("/bookings", {
+                        const response = await apiFetch<{
+                            statusCode: number;
+                            success: boolean;
+                            message: string;
+                            data: BookingInquiry;
+                        }>("/bookings", {
                             method: "POST",
                             body: JSON.stringify(payload),
                         });
-                        set((state) => ({ bookings: [...state.bookings, response] }));
-                        return response;
+
+                        set((state) => ({ bookings: [...state.bookings, response.data] }));
+                        return response.data;
                     } catch (err: any) {
                         set({ error: err.message });
                         return null;
@@ -80,14 +110,21 @@ const useBookingStore = create<BookingState>()(
                 updateBooking: async (id: string, payload: Partial<BookingInquiryPayload>) => {
                     set({ loading: true, error: null });
                     try {
-                        const response = await apiFetch<BookingInquiry>(`/booking-inquiries/${id}`, {
+                        const response = await apiFetch<{
+                            statusCode: number;
+                            success: boolean;
+                            message: string;
+                            data: BookingInquiry;
+                        }>(`/bookings/${id}`, {
                             method: "PUT",
                             body: JSON.stringify(payload),
                         });
+
                         set((state) => ({
-                            bookings: state.bookings.map((b) => (b.id === id ? response : b)),
+                            bookings: state.bookings.map((b) => (b.id === id ? response.data : b)),
                         }));
-                        return response;
+
+                        return response.data;
                     } catch (err: any) {
                         set({ error: err.message });
                         return null;
@@ -100,7 +137,7 @@ const useBookingStore = create<BookingState>()(
                 deleteBooking: async (id: string) => {
                     set({ loading: true, error: null });
                     try {
-                        await apiFetch(`/booking-inquiries/${id}`, { method: "DELETE" });
+                        await apiFetch(`/bookings/${id}`, { method: "DELETE" });
                         set((state) => ({
                             bookings: state.bookings.filter((b) => b.id !== id),
                         }));

@@ -1,47 +1,17 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import VenuesPage from "@/components/VenuesPage"
-const venues = [
-    {
-        name: "Mountain View Retreat",
-        img: "https://images.pexels.com/photos/2372945/pexels-photo-2372945.jpeg",
-        price: "$500/day",
-        capacity: 50,
-        rating: 4.8,
-        location: "Colorado, USA",
-    },
-    {
-        name: "Beachside Escape",
-        img: "https://images.pexels.com/photos/2372945/pexels-photo-2372945.jpeg",
-        price: "$650/day",
-        capacity: 70,
-        rating: 4.7,
-        location: "Malibu, CA",
-    },
-    {
-        name: "Forest Lodge",
-        img: "https://images.pexels.com/photos/210617/pexels-photo-210617.jpeg",
-        price: "$400/day",
-        capacity: 40,
-        rating: 4.9,
-        location: "Oregon, USA",
-    },
-];
+import AddVenueModal from "@/components/AddVenueModal";
 
 export default function Home() {
+    const [menuOpen, setMenuOpen] = useState(false);
+    const [openVenueModal, setOpenVenueModal] = useState(false);
+
     return (
         <main className="min-h-screen w-full bg-gray-50 text-gray-900">
-            {/* NAVBAR */}
-            <nav className="w-full px-6 py-5 flex justify-between items-center bg-white shadow sticky top-0 z-50">
-                <h1 className="text-2xl font-bold text-blue-600">RetreatHub</h1>
-                <div className="space-x-6 hidden md:flex">
-                    <a href="#venues" className="hover:text-blue-600">Venues</a>
-                    <a href="#why" className="hover:text-blue-600">Why Us</a>
-                    <a href="#contact" className="hover:text-blue-600">Contact</a>
-                </div>
-                <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-                    Book Now
-                </button>
-            </nav>
+
 
             {/* HERO SECTION */}
             <section className="relative w-full flex flex-col items-center justify-center text-center px-6 pt-32 pb-32 bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 text-white">
@@ -71,7 +41,7 @@ export default function Home() {
             </section>
 
             {/* TOP DESTINATIONS */}
-            <section className="px-6 py-20 bg-white text-gray-900">
+            <section className="px-6 pb-20 bg-white text-gray-900">
                 <h2 className="text-3xl font-semibold mb-10 text-center">Popular Retreat Destinations</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
                     {[

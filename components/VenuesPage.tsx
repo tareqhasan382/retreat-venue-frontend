@@ -1,35 +1,51 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import useVenueStore from "@/store/venue.store";
+import BookingForm from "@/components/BookingForm";
+import { X } from "lucide-react";
+import {VenueSkeleton} from "@/components/VenueSkeleton";
 import useDebounce from "@/hooks/useDebounce";
-import { VenueSkeleton } from "@/components/VenueSkeleton";
 
 export default function VenuesPage() {
     const { venues, getVenues, loading, totalVenues, page, pageSize, setPage } = useVenueStore();
-
-    const [filters, setFilters] = useState({
-        city: "",
-        minCapacity: "",
-        maxPrice: "",
-    });
-
+    //console.log("venues----------->", venues);
+    const [filters, setFilters] = useState({ city: "", minCapacity: "", maxPrice: "" });
+    const [selectedVenueId, setSelectedVenueId] = useState<string | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
     const debouncedFilters = useDebounce(filters, 500);
-
     useEffect(() => {
-        getVenues({
+        fetchVenues();
+    }, [page,debouncedFilters]);
+
+    const fetchVenues = async () => {
+        await getVenues({
             city: debouncedFilters.city || undefined,
             minCapacity: debouncedFilters.minCapacity ? Number(debouncedFilters.minCapacity) : undefined,
             maxPrice: debouncedFilters.maxPrice ? Number(debouncedFilters.maxPrice) : undefined,
             page,
             pageSize,
         });
-    }, [debouncedFilters, page]);
+    };
 
-    const handleFilterChange = (e: any) => {
+    const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFilters({ ...filters, [e.target.name]: e.target.value });
+    };
+
+    const applyFilters = () => {
         setPage(1);
+        fetchVenues();
+    };
+
+    const openModal = (venueId: string) => {
+        setSelectedVenueId(venueId);
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setSelectedVenueId(null);
+        setIsModalOpen(false);
     };
 
     const totalPages = Math.ceil(totalVenues / pageSize);
@@ -38,8 +54,8 @@ export default function VenuesPage() {
         <div className="max-w-7xl mx-auto px-4 py-10">
             <h1 className="text-3xl font-bold mb-6">Available Venues</h1>
 
-            {/* FILTERS */}
-            <div className="flex gap-4 mb-6">
+            {/* Filters */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                 <input
                     type="text"
                     name="city"
@@ -48,7 +64,6 @@ export default function VenuesPage() {
                     placeholder="City"
                     className="border p-2 rounded"
                 />
-
                 <input
                     type="number"
                     name="minCapacity"
@@ -57,7 +72,6 @@ export default function VenuesPage() {
                     placeholder="Min Capacity"
                     className="border p-2 rounded"
                 />
-
                 <input
                     type="number"
                     name="maxPrice"
@@ -66,44 +80,71 @@ export default function VenuesPage() {
                     placeholder="Max Price"
                     className="border p-2 rounded"
                 />
+                {/*<button onClick={applyFilters} className="bg-blue-600 text-white px-4 rounded">*/}
+                {/*    Apply*/}
+                {/*</button>*/}
             </div>
 
-            {/* LIST */}
+            {/* Venue List */}
             {loading ? (
                 <VenueSkeleton />
-            ) : venues.length === 0 ? (
-                <p>No venues found.</p>
+            ) : venues?.length === 0 ? (
+                <p className="text-gray-500 text-lg">No venues found.</p>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {venues.map((venue) => (
-                        <div key={venue.id} className="bg-white rounded-xl shadow p-4">
+                    {venues?.map((venue) => (
+                        <div key={venue.id} className="bg-white shadow rounded-xl overflow-hidden hover:shadow-lg transition">
                             <div className="relative h-52">
-                                <Image src={venue.imageUrl|| "/placeholder.jpg"} alt={venue.name} fill className="object-cover" />
+                                <Image src={venue.imageUrl || "/placeholder.jpg"} alt={venue.name} fill className="object-cover" />
                             </div>
-                            <h2 className="text-xl mt-2">{venue.name}</h2>
-                            <p className="text-gray-600">{venue.city}</p>
-                            <p className="text-sm mt-1">{venue.description}</p>
+                            <div className="p-4">
+                                <h2 className="text-xl font-semibold">{venue.name}</h2>
+                                <p className="text-gray-600">{venue.city}, {venue.country}</p>
+                                <div className="mt-3 flex justify-between text-sm">
+                                    <span className="font-medium">Capacity: {venue.capacity}</span>
+                                    <span className="font-medium text-blue-600">${venue.pricePerNight}/night</span>
+                                </div>
+                                <p className="text-gray-500 text-sm mt-2 line-clamp-2">{venue.description}</p>
+                                <button
+                                    onClick={() => openModal(venue.id)}
+                                    className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition"
+                                >
+                                    Book Now
+                                </button>
+                            </div>
                         </div>
                     ))}
                 </div>
             )}
 
-            {/* PAGINATION */}
+            {/* Pagination */}
             {totalPages > 1 && (
                 <div className="flex justify-center gap-2 mt-6">
                     {Array.from({ length: totalPages }, (_, i) => (
                         <button
                             key={i}
+                            className={`px-3 py-1 rounded ${page === i + 1 ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}
                             onClick={() => setPage(i + 1)}
-                            className={`px-3 py-1 rounded ${
-                                page === i + 1 ? "bg-blue-600 text-white" : "bg-gray-200"
-                            }`}
                         >
                             {i + 1}
                         </button>
                     ))}
                 </div>
             )}
+
+            {/* Modal */}
+            {isModalOpen && selectedVenueId && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                    <div className="bg-white rounded-xl w-full max-w-md p-6 relative">
+                        <button onClick={closeModal} className="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
+                            <X size={24} />
+                        </button>
+                        <h2 className="text-xl font-semibold mb-4">Book Your Venue</h2>
+                        <BookingForm venueId={selectedVenueId} />
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
+
