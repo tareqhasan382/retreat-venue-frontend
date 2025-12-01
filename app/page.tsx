@@ -1,5 +1,5 @@
 import Image from "next/image";
-
+import VenuesPage from "@/components/VenuesPage"
 const venues = [
     {
         name: "Mountain View Retreat",
@@ -66,28 +66,10 @@ export default function Home() {
             {/* FEATURED VENUES */}
             <section id="venues" className="px-6 py-16 max-w-7xl mx-auto">
                 <h2 className="text-3xl font-semibold mb-8 text-center">Featured Retreat Venues</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {venues.map((venue, idx) => (
-                        <div key={idx} className="bg-white rounded-2xl shadow hover:shadow-xl transition overflow-hidden">
-                            <div className="relative h-64 w-full">
-                                <Image src={venue.img} alt={venue.name} fill className="object-cover" />
-                            </div>
-                            <div className="p-5">
-                                <h3 className="text-xl font-semibold">{venue.name}</h3>
-                                <p className="text-gray-500 text-sm mt-1">{venue.location}</p>
-                                <div className="flex items-center justify-between mt-2">
-                                    <span className="text-gray-700 font-medium">{venue.price}</span>
-                                    <span className="text-yellow-500 font-semibold">{venue.rating} ⭐</span>
-                                </div>
-                                <p className="mt-2 text-gray-600 text-sm">Capacity: {venue.capacity} people</p>
-                                <button className="mt-4 w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
-                                    View Details
-                                </button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+
+                <VenuesPage />
             </section>
+
             {/* TOP DESTINATIONS */}
             <section className="px-6 py-20 bg-white text-gray-900">
                 <h2 className="text-3xl font-semibold mb-10 text-center">Popular Retreat Destinations</h2>
